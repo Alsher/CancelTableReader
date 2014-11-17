@@ -11,6 +11,8 @@ import java.util.ArrayList;
  */
 public class GUI extends JFrame
 {
+    private static final int TABLEWIDTH = 825, TABLEHEIGHT = 300;
+
     private JPanel controlls;
     private JComboBox<String> selectClass;
     private JComboBox<String> selectDay;
@@ -35,6 +37,8 @@ public class GUI extends JFrame
         add(controlls);
         add(graphics);
 
+        setResizable(false);
+
         render();
     }
 
@@ -49,6 +53,9 @@ public class GUI extends JFrame
         selectClass = new JComboBox<>();
         for(int i = 5; i <= 13; i++)
             selectClass.addItem("Class " + i);
+        selectClass.addItem("Special");
+        selectClass.addItem("All Classes");
+        selectClass.setSelectedIndex(selectClass.getItemCount() - 1);
         selectClass.addActionListener(new ACTListener());
 
         selectDay = new JComboBox<>();
@@ -65,7 +72,7 @@ public class GUI extends JFrame
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("No Info", new String[]{});
         cancelTable = new JTable(model);
-        cancelTable.setPreferredScrollableViewportSize(new Dimension(100, 50));
+        cancelTable.setPreferredScrollableViewportSize(new Dimension(TABLEWIDTH, TABLEHEIGHT));
         scrollPane = new JScrollPane(cancelTable);
         graphics.add(scrollPane);
     }
@@ -80,7 +87,14 @@ public class GUI extends JFrame
                 if(sourceBox.equals(selectClass) || sourceBox.equals(selectDay))
                 {
                     IndexedDay day = ParseCancel.getDay(selectDay.getSelectedIndex());
-                    ArrayList<IndexedCancel> cancelList = day.getCancelByClass(String.valueOf(selectClass.getSelectedIndex() + 5));
+                    ArrayList<IndexedCancel> cancelList;
+
+                    if(selectClass.getSelectedItem().equals("All Classes"))
+                        cancelList = day.getCancelList();
+                    else if(selectClass.getSelectedItem().equals("Special"))
+                        cancelList = day.getCancelByClass(IndexedCancel.EMPTY_MESSAGE);
+                    else
+                        cancelList = day.getCancelByClass(String.valueOf(selectClass.getSelectedItem().toString().substring("Class ".length())));
 
                     if(!cancelList.isEmpty())
                     {
@@ -103,7 +117,7 @@ public class GUI extends JFrame
 
                         graphics.remove(scrollPane);
                         cancelTable = new JTable(new CancelTableModel(data));
-                        cancelTable.setPreferredScrollableViewportSize(new Dimension(1000, 300));
+                        cancelTable.setPreferredScrollableViewportSize(new Dimension(TABLEWIDTH, TABLEHEIGHT));
                         cancelTable.setFillsViewportHeight(true);
                         cancelTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
                         scrollPane = new JScrollPane(cancelTable);
@@ -116,6 +130,9 @@ public class GUI extends JFrame
                         DefaultTableModel model = new DefaultTableModel();
                         model.addColumn("No Info", new String[]{});
                         cancelTable = new JTable(model);
+                        cancelTable.setPreferredScrollableViewportSize(new Dimension(TABLEWIDTH, TABLEHEIGHT));
+                        cancelTable.setFillsViewportHeight(true);
+                        cancelTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
                         scrollPane = new JScrollPane(cancelTable);
                         graphics.add(scrollPane);
                         render();
