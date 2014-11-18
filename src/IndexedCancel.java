@@ -17,7 +17,7 @@ public class IndexedCancel
     private static final int TYPE_ID = 9;
     private static final int COMMENT_ID = 10;
 
-    public static final String EMPTY_MESSAGE = "N/A";
+    public static final String EMPTY_MESSAGE = "---";
 
     private String lessonNumber;
     private String date;

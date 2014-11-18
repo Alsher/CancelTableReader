@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by Phil on 01.11.14.
@@ -61,6 +62,10 @@ public class GUI extends JFrame
         selectDay = new JComboBox<>();
         for(int i = 0; i < ParseCancel.getDayList().size(); i++)
             selectDay.addItem(ParseCancel.getDayList().get(i).getDayName());
+
+        int currentDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1; //get(Calendar.DAY_OF_WEEK) starts with SUNDAY as 1
+        if(selectDay.getItemCount() > currentDay)
+            selectDay.setSelectedIndex(currentDay - 1); //index starts at 0
         selectDay.addActionListener(new ACTListener());
 
         controlls.add(selectClass);
