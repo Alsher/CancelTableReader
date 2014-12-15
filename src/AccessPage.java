@@ -17,13 +17,15 @@ public class AccessPage
 
         String url = urlp1 + calendarWeek + urlp2;
 
+        double start = System.nanoTime();
         Document doc = Jsoup
                 .connect(url)
                 .header("Authorization", "Basic " + base64login)
                 .get();
+        System.out.println("Connecting took: " + (System.nanoTime() - start) / 1000000.0 + "ms.");
 
-        double start = System.nanoTime();
+        start = System.nanoTime();
         ParseCancel.parse(doc);
-        System.out.println("Connecting and Parsing took: " + (System.nanoTime() - start) / 1000000.0 + "ms.");
+        System.out.println("Parsing took: " + (System.nanoTime() - start) / 1000000.0 + "ms.");
     }
 }

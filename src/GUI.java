@@ -32,8 +32,8 @@ public class GUI extends JFrame
         controlls = new JPanel();
         graphics = new JPanel();
 
-        generateControlls();
         generateGraphics();
+        generateControlls();
 
         add(controlls);
         add(graphics);
@@ -47,6 +47,16 @@ public class GUI extends JFrame
     {
         pack();
         setVisible(true);
+    }
+
+    private void generateGraphics()
+    {
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("No Info", new String[]{});
+        cancelTable = new JTable(model);
+        cancelTable.setPreferredScrollableViewportSize(new Dimension(TABLEWIDTH, TABLEHEIGHT));
+        scrollPane = new JScrollPane(cancelTable);
+        graphics.add(scrollPane);
     }
 
     private void generateControlls()
@@ -63,86 +73,69 @@ public class GUI extends JFrame
         for(int i = 0; i < ParseCancel.getDayList().size(); i++)
             selectDay.addItem(ParseCancel.getDayList().get(i).getDayName());
 
-        int currentDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1; //get(Calendar.DAY_OF_WEEK) starts with SUNDAY as 1
+        selectDay.addActionListener(new ACTListener());
+
+        Calendar calendar = Calendar.getInstance();
+        int currentDay = calendar.get(Calendar.DAY_OF_WEEK) - 1; //get(Calendar.DAY_OF_WEEK) starts with SUNDAY as 1
+        if(calendar.get(Calendar.HOUR_OF_DAY) >= 18)
+            currentDay++;
         if(selectDay.getItemCount() > currentDay)
             selectDay.setSelectedIndex(currentDay - 1); //index starts at 0
-        selectDay.addActionListener(new ACTListener());
+        else
+            selectDay.setSelectedIndex(0);
 
         controlls.add(selectClass);
         controlls.add(selectDay);
     }
 
-    private void generateGraphics()
-    {
-        DefaultTableModel model = new DefaultTableModel();
-        model.addColumn("No Info", new String[]{});
-        cancelTable = new JTable(model);
-        cancelTable.setPreferredScrollableViewportSize(new Dimension(TABLEWIDTH, TABLEHEIGHT));
-        scrollPane = new JScrollPane(cancelTable);
-        graphics.add(scrollPane);
-    }
-
     class ACTListener implements ActionListener
     {
         @Override
-        public void actionPerformed(ActionEvent e) {
-            if(e.getSource() instanceof JComboBox)
+        public void actionPerformed(ActionEvent e)
+        {
+            if(e.getSource() instanceof JComboBox &&
+                    (e.getSource().equals(selectDay) || e.getSource().equals(selectClass)))
             {
-                JComboBox sourceBox = (JComboBox) e.getSource();
-                if(sourceBox.equals(selectClass) || sourceBox.equals(selectDay))
-                {
-                    IndexedDay day = ParseCancel.getDay(selectDay.getSelectedIndex());
-                    ArrayList<IndexedCancel> cancelList;
+                IndexedDay day = ParseCancel.getDay(selectDay.getSelectedIndex());
+                ArrayList<IndexedCancel> cancelList;
 
-                    if(selectClass.getSelectedItem().equals("All Classes"))
-                        cancelList = day.getCancelList();
-                    else if(selectClass.getSelectedItem().equals("Special"))
-                        cancelList = day.getCancelByClass(IndexedCancel.EMPTY_MESSAGE);
-                    else
-                        cancelList = day.getCancelByClass(String.valueOf(selectClass.getSelectedItem().toString().substring("Class ".length())));
+                if(selectClass.getSelectedItem().equals("All Classes"))
+                    cancelList = day.getCancelList();
+                else if(selectClass.getSelectedItem().equals("Special"))
+                    cancelList = day.getCancelByClass(IndexedCancel.EMPTY_MESSAGE);
+                else
+                    cancelList = day.getCancelByClass(String.valueOf(selectClass.getSelectedItem().toString().substring("Class ".length())));
 
-                    if(!cancelList.isEmpty())
-                    {
-                        int rowCount = 0;
-                        String[][] data = new String[cancelList.size()][11];
-                        for(IndexedCancel c : cancelList) {
-                            data[rowCount][0] = c.getLessonNumber();
-                            data[rowCount][1] = c.getDate();
-                            data[rowCount][2] = c.getClassName();
-                            data[rowCount][3] = c.getTeacher();
-                            data[rowCount][4] = c.getSubject();
-                            data[rowCount][5] = c.getCoverSubject();
-                            data[rowCount][6] = c.getCoverTeacher();
-                            data[rowCount][7] = c.getRoom();
-                            data[rowCount][8] = c.getAlternativeRoom();
-                            data[rowCount][9] = c.getType();
-                            data[rowCount][10] = c.getComment();
-                            rowCount++;
-                        }
-
-                        graphics.remove(scrollPane);
-                        cancelTable = new JTable(new CancelTableModel(data));
-                        cancelTable.setPreferredScrollableViewportSize(new Dimension(TABLEWIDTH, TABLEHEIGHT));
-                        cancelTable.setFillsViewportHeight(true);
-                        cancelTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-                        scrollPane = new JScrollPane(cancelTable);
-                        graphics.add(scrollPane);
-                        render();
+                graphics.remove(scrollPane);
+                if(!cancelList.isEmpty()) {
+                    int rowCount = 0;
+                    String[][] data = new String[cancelList.size()][11];
+                    for (IndexedCancel c : cancelList) {
+                        data[rowCount][ 0] = c.getLessonNumber();
+                        data[rowCount][ 1] = c.getDate();
+                        data[rowCount][ 2] = c.getClassName();
+                        data[rowCount][ 3] = c.getTeacher();
+                        data[rowCount][ 4] = c.getSubject();
+                        data[rowCount][ 5] = c.getCoverSubject();
+                        data[rowCount][ 6] = c.getCoverTeacher();
+                        data[rowCount][ 7] = c.getRoom();
+                        data[rowCount][ 8] = c.getAlternativeRoom();
+                        data[rowCount][ 9] = c.getType();
+                        data[rowCount][10] = c.getComment();
+                        rowCount++;
                     }
-                    else
-                    {
-                        graphics.remove(scrollPane);
-                        DefaultTableModel model = new DefaultTableModel();
-                        model.addColumn("No Info", new String[]{});
-                        cancelTable = new JTable(model);
-                        cancelTable.setPreferredScrollableViewportSize(new Dimension(TABLEWIDTH, TABLEHEIGHT));
-                        cancelTable.setFillsViewportHeight(true);
-                        cancelTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-                        scrollPane = new JScrollPane(cancelTable);
-                        graphics.add(scrollPane);
-                        render();
-                    }
+                    cancelTable = new JTable(new CancelTableModel(data));
                 }
+                else
+                    cancelTable = new JTable(new DefaultTableModel(new String[1][1], new String[]{"No Info"}));
+
+                cancelTable.setPreferredScrollableViewportSize(new Dimension(TABLEWIDTH, TABLEHEIGHT));
+                cancelTable.setFillsViewportHeight(true);
+                cancelTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+                scrollPane = new JScrollPane(cancelTable);
+                graphics.add(scrollPane);
+                render();
             }
         }
     }
@@ -165,8 +158,7 @@ public class GUI extends JFrame
 
         private Object[][] data;
 
-        public CancelTableModel(String[][] data)
-        {
+        public CancelTableModel(String[][] data) {
             this.data = data;
         }
 
@@ -176,12 +168,10 @@ public class GUI extends JFrame
         public int getColumnCount() {
             return columnNames.length;
         }
-        public Class getColumnClass(int columnIndex)
-        {
+        public Class getColumnClass(int columnIndex) {
             return getValueAt(0, columnIndex).getClass();
         }
-        public String getColumnName(int columnIndex)
-        {
+        public String getColumnName(int columnIndex) {
             return columnNames[columnIndex];
         }
         public Object getValueAt(int rowIndex, int columnIndex) {

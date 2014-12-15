@@ -43,9 +43,12 @@ public class IndexedDay
     {
         ArrayList<IndexedCancel> returnList = new ArrayList<>();
         for(IndexedCancel c : cancelList)
-            if(c.getClassName().equals(className))
+            if (c.getClassName().equals(className))
                 returnList.add(c);
-
+            else if (c.getClassName().startsWith("(") && c.getClassName().endsWith(")") &&
+                     c.getClassName().substring(1, c.getClassName().length() - 1).equals(className))
+                returnList.add(c);
+        
         return returnList;
     }
 
