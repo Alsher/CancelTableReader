@@ -4,9 +4,6 @@ import org.jsoup.nodes.Document;
 import java.io.IOException;
 import java.util.Calendar;
 
-/**
- * Created by Phil on 09.06.14.
- */
 public class AccessPage
 {
     public static void getPage(String base64login, String urlp1, String urlp2) throws IOException {
@@ -18,10 +15,7 @@ public class AccessPage
         String url = urlp1 + calendarWeek + urlp2;
 
         double start = System.nanoTime();
-        Document doc = Jsoup
-                .connect(url)
-                .header("Authorization", "Basic " + base64login)
-                .get();
+        Document doc = Jsoup.connect(url).header("Authorization", "Basic " + base64login).get();
         System.out.println("Connecting took: " + (System.nanoTime() - start) / 1000000.0 + "ms.");
 
         start = System.nanoTime();

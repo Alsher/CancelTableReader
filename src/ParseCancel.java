@@ -1,50 +1,31 @@
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-/**
- * Created by Phil on 30.10.14.
- */
 public class ParseCancel
 {
-    private static final String dateIdentifier = "<b>";
     private static final int cancelLength = 12;
-
     private static ArrayList<IndexedDay> dayList;
 
     public static void parse(Document doc) throws IOException
     {
         if(dayList == null)
             dayList = new ArrayList<>();
+
+        /** convert from elem.toString() to a '\n'-separated ArrayList **/
         ArrayList<String> contentList = new ArrayList<>();
-
-        /** convert from elem.toString() to a newLine-separated ArrayList **/
-        for(Element elem : doc.getAllElements()) {
-            String[] sArray = elem.toString().split("\n");
-            for(String s : sArray)
+        for(String s : doc.body().toString().split("\n"))
                 contentList.add(s.trim());
-        }
-
-        /** fix some weird bugs **/
-        for(int i = 0; i < contentList.size(); i++)
-        {
-            if(contentList.get(i).equals("</html>")) {
-                contentList = new ArrayList<>(contentList.subList(0, i));
-                break;
-            }
-        }
 
         /** get and parse days **/
         int startDay = 0;
         int endDay = 0;
-
         for(int i = 0; i < contentList.size(); i++)
         {
             String currentLine = contentList.get(i);
             /** check for day identifier **/
-            if(currentLine.startsWith("<p>") && currentLine.contains(dateIdentifier))
+            if(currentLine.startsWith("<p>") && currentLine.contains("<b>"))
             {
                 if (endDay != 0)
                 {
@@ -69,7 +50,8 @@ public class ParseCancel
                     dayList.add(parseDay(new ArrayList<>(contentList.subList(startDay, endDay))));
                     startDay = i;
                 }
-                else {
+                else
+                {
                     endDay = i;
                     startDay = i;
                 }
@@ -92,7 +74,7 @@ public class ParseCancel
     {
         IndexedDay day = new IndexedDay();
 
-        /** get current Day Namy**/
+        /** get current Day Name **/
         String line = contentList.get(0);
         int start = 0, end = 0;
         for(int i = 0; i < line.length(); i++)
@@ -103,72 +85,38 @@ public class ParseCancel
 
             if(lineCharArray[i] == '<' && lineCharArray[i + 1] == '/' && lineCharArray[i + 2] == 'b')
                 end = i;
-
         }
         day.setDayName(line.substring(start, end));
 
-        /** check for valid cancel data **/
-        boolean hasCancelContent = true;
-        for(String s : contentList)
-        {
-            if(s.contains("Vertretungen sind nicht freigegeben")) {
-                hasCancelContent = false;
-                break;
-            }
-        }
         /** add data **/
-        ArrayList<ArrayList<String>> inceptionList = new ArrayList<>();
-        if(hasCancelContent)
-        {
+        int j = 0;
+        if(!(contentList.get(contentList.size() - 1).contains("Vertretungen sind nicht freigegeben"))) //make sure cancel data is valid
             for(int i = 0; i < contentList.size(); i++)
                 if(contentList.get(i).startsWith("<tr class=\"list "))
-                    inceptionList.add(new ArrayList<>(contentList.subList(i, i + cancelLength)));
-
-            for(ArrayList<String> list : inceptionList) {
-                IndexedCancel cancel = parseCancel(list);
-                day.addCancel(cancel);
-            }
-        }
-
-        /** attempt to auto-fix some known table issues **/
-        for(int i = 0; i < day.getCancelList().size(); i++)
-        {
-            IndexedCancel currentCancel = day.getCancelList().get(i);
-            if(currentCancel.getLessonNumber().equals(IndexedCancel.EMPTY_MESSAGE))
-                if(!currentCancel.getComment().equals(IndexedCancel.EMPTY_MESSAGE))
                 {
-                    IndexedCancel fixedCancel = day.getCancelList().get(i - 1);
-                    fixedCancel.setComment(day.getCancelList().get(i - 1).getComment() + currentCancel.getComment());
-                    day.setCancel(fixedCancel, i - 1);
-                    day.removeCancel(i);
-                    i--;
+                    IndexedCancel cancel = parseCancel(new ArrayList<>(contentList.subList(i, i + cancelLength)));
+                    /** attempt to auto-fix some known table issues **/
+                    boolean shouldAdd = true;
+                    if(cancel.getLessonNumber().equals(IndexedCancel.EMPTY_MESSAGE))
+                    {
+                        shouldAdd = false;
+                        IndexedCancel fixedCancel = day.getCancelList().get(j - 1);
+                        if(!cancel.getComment().equals(IndexedCancel.EMPTY_MESSAGE))
+                            fixedCancel.setComment(day.getCancelList().get(j - 1).getComment() + cancel.getComment());
+                        else if (!cancel.getSubject().equals(IndexedCancel.EMPTY_MESSAGE))
+                            fixedCancel.setSubject(day.getCancelList().get(j - 1).getSubject() + cancel.getSubject());
+                        else if (!cancel.getTeacher().equals(IndexedCancel.EMPTY_MESSAGE))
+                            fixedCancel.setTeacher(day.getCancelList().get(j - 1).getTeacher() + cancel.getTeacher());
+                        else if (!cancel.getType().equals(IndexedCancel.EMPTY_MESSAGE))
+                            fixedCancel.setType(day.getCancelList().get(j - 1).getType() + cancel.getType());
+                        else
+                            shouldAdd = true;
+                        day.setCancel(fixedCancel, j - 1);
+                    }
+                    if(shouldAdd)
+                        day.addCancel(cancel);
+                    j = day.getCancelList().size();
                 }
-                else if(!currentCancel.getSubject().equals(IndexedCancel.EMPTY_MESSAGE))
-                {
-                    IndexedCancel fixedCancel = day.getCancelList().get(i - 1);
-                    fixedCancel.setSubject(day.getCancelList().get(i - 1).getSubject() + currentCancel.getSubject());
-                    day.setCancel(fixedCancel, i - 1);
-                    day.removeCancel(i);
-                    i--;
-                }
-                else if(!currentCancel.getTeacher().equals(IndexedCancel.EMPTY_MESSAGE))
-                {
-                    IndexedCancel fixedCancel = day.getCancelList().get(i - 1);
-                    fixedCancel.setTeacher(day.getCancelList().get(i - 1).getTeacher() + currentCancel.getTeacher());
-                    day.setCancel(fixedCancel, i - 1);
-                    day.removeCancel(i);
-                    i--;
-                }
-                else if(!currentCancel.getType().equals(IndexedCancel.EMPTY_MESSAGE))
-                {
-                    IndexedCancel fixedCancel = day.getCancelList().get(i - 1);
-                    fixedCancel.setType(day.getCancelList().get(i - 1).getType() + currentCancel.getType());
-                    day.setCancel(fixedCancel, i - 1);
-                    day.removeCancel(i);
-                    i--;
-                }
-        }
-
         return day;
     }
 
