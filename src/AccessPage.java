@@ -12,7 +12,7 @@ public class AccessPage
         if(now.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || now.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
             calendarWeek++;
 
-        String url = urlp1 + calendarWeek + urlp2;
+        String url = urlp1 + (calendarWeek < 10 ? "0" : "") + calendarWeek + urlp2;
 
         double start = System.nanoTime();
         Document doc = Jsoup.connect(url).header("Authorization", "Basic " + base64login).get();
