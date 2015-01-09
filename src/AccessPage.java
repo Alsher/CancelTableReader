@@ -4,6 +4,10 @@ import org.jsoup.nodes.Document;
 import java.io.IOException;
 import java.util.Calendar;
 
+/*
+    AccessPage Class to access given url with given base64-login
+ */
+
 public class AccessPage
 {
     public static void getPage(String base64login, String urlp1, String urlp2) throws IOException {

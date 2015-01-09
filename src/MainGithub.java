@@ -3,9 +3,6 @@ import org.apache.commons.net.util.Base64;
 import java.io.IOException;
 import java.util.Scanner;
 
-/**
- * Created by Phil on 16.11.14.
- */
 public class MainGithub
 {
     public static void main(String[] args) throws InterruptedException, IOException

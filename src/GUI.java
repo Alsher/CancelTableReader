@@ -7,14 +7,15 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-/**
- * Created by Phil on 01.11.14.
+/*
+    GUI Class to offer a graphical presentation of parsed data
  */
+
 public class GUI extends JFrame
 {
-    private static final int TABLEWIDTH = 825, TABLEHEIGHT = 300;
+    private static final int TABLE_WIDTH = 825, TABLE_HEIGHT = 300;
 
-    private JPanel controlls;
+    private JPanel controls;
     private JComboBox<String> selectClass;
     private JComboBox<String> selectDay;
 
@@ -29,13 +30,13 @@ public class GUI extends JFrame
 
         setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        controlls = new JPanel();
+        controls = new JPanel();
         graphics = new JPanel();
 
         generateGraphics();
         generateControlls();
 
-        add(controlls);
+        add(controls);
         add(graphics);
 
         setResizable(false);
@@ -54,7 +55,7 @@ public class GUI extends JFrame
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("No Info", new String[]{});
         cancelTable = new JTable(model);
-        cancelTable.setPreferredScrollableViewportSize(new Dimension(TABLEWIDTH, TABLEHEIGHT));
+        cancelTable.setPreferredScrollableViewportSize(new Dimension(TABLE_WIDTH, TABLE_HEIGHT));
         scrollPane = new JScrollPane(cancelTable);
         graphics.add(scrollPane);
     }
@@ -79,13 +80,13 @@ public class GUI extends JFrame
         int currentDay = calendar.get(Calendar.DAY_OF_WEEK) - 1; //get(Calendar.DAY_OF_WEEK) starts with SUNDAY as 1
         if(calendar.get(Calendar.HOUR_OF_DAY) >= 18)
             currentDay++;
-        if(selectDay.getItemCount() > currentDay)
+        if(selectDay.getItemCount() >= currentDay)
             selectDay.setSelectedIndex(currentDay - 1); //index starts at 0
         else
             selectDay.setSelectedIndex(0);
 
-        controlls.add(selectClass);
-        controlls.add(selectDay);
+        controls.add(selectClass);
+        controls.add(selectDay);
     }
 
     class ACTListener implements ActionListener
@@ -129,7 +130,7 @@ public class GUI extends JFrame
                 else
                     cancelTable = new JTable(new DefaultTableModel(new String[1][1], new String[]{"No Info"}));
 
-                cancelTable.setPreferredScrollableViewportSize(new Dimension(TABLEWIDTH, TABLEHEIGHT));
+                cancelTable.setPreferredScrollableViewportSize(new Dimension(TABLE_WIDTH, TABLE_HEIGHT));
                 cancelTable.setFillsViewportHeight(true);
                 cancelTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 

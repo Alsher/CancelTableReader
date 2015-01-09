@@ -1,8 +1,5 @@
 import java.util.ArrayList;
 
-/**
- * Created by Phil on 30.10.14.
- */
 public class IndexedDay
 {
     private ArrayList<IndexedCancel> cancelList;

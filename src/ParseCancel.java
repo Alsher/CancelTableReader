@@ -3,6 +3,10 @@ import org.jsoup.nodes.Document;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/*
+    Parser Class to convert collected HTML data to usable data
+ */
+
 public class ParseCancel
 {
     private static final int cancelLength = 12;
@@ -96,24 +100,22 @@ public class ParseCancel
                 {
                     IndexedCancel cancel = parseCancel(new ArrayList<>(contentList.subList(i, i + cancelLength)));
                     /** attempt to auto-fix some known table issues **/
-                    boolean shouldAdd = true;
                     if(cancel.getLessonNumber().equals(IndexedCancel.EMPTY_MESSAGE))
                     {
-                        shouldAdd = false;
                         IndexedCancel fixedCancel = day.getCancelList().get(j - 1);
                         if(!cancel.getComment().equals(IndexedCancel.EMPTY_MESSAGE))
-                            fixedCancel.setComment(day.getCancelList().get(j - 1).getComment() + cancel.getComment());
-                        else if (!cancel.getSubject().equals(IndexedCancel.EMPTY_MESSAGE))
-                            fixedCancel.setSubject(day.getCancelList().get(j - 1).getSubject() + cancel.getSubject());
-                        else if (!cancel.getTeacher().equals(IndexedCancel.EMPTY_MESSAGE))
-                            fixedCancel.setTeacher(day.getCancelList().get(j - 1).getTeacher() + cancel.getTeacher());
-                        else if (!cancel.getType().equals(IndexedCancel.EMPTY_MESSAGE))
-                            fixedCancel.setType(day.getCancelList().get(j - 1).getType() + cancel.getType());
-                        else
-                            shouldAdd = true;
+                            fixedCancel.setComment(fixedCancel.getComment() + " " + cancel.getComment());
+                        if (!cancel.getSubject().equals(IndexedCancel.EMPTY_MESSAGE))
+                            fixedCancel.setSubject(fixedCancel.getSubject() + cancel.getSubject());
+                        if (!cancel.getCoverSubject().equals(IndexedCancel.EMPTY_MESSAGE))
+                            fixedCancel.setCoverSubject(fixedCancel.getCoverTeacher() + cancel.getCoverSubject());
+                        if (!cancel.getTeacher().equals(IndexedCancel.EMPTY_MESSAGE))
+                            fixedCancel.setTeacher(fixedCancel.getTeacher() + cancel.getTeacher());
+                        if (!cancel.getType().equals(IndexedCancel.EMPTY_MESSAGE))
+                            fixedCancel.setType(fixedCancel.getType() + " " + cancel.getType());
                         day.setCancel(fixedCancel, j - 1);
                     }
-                    if(shouldAdd)
+                    else //only add current cancel if it hasn't been used for auto-fixing
                         day.addCancel(cancel);
                     j = day.getCancelList().size();
                 }

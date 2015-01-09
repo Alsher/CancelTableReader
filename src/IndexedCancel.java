@@ -1,7 +1,3 @@
-/**
- * Created by Phil on 30.10.14.
- */
-
 public class IndexedCancel
 {
 
@@ -62,8 +58,7 @@ public class IndexedCancel
 
     public void autoAssign(int id, String value)
     {
-        if(id < 0 || id > 11)
-            System.err.println("Error: attribute count is not supported");
+        assert(id > 0 || id < 11) : ("Attribute count: " + id + " is not supported");
 
         if(value.equals("&nbsp;"))
             value = EMPTY_MESSAGE;
