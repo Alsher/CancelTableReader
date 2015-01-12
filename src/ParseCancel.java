@@ -98,7 +98,7 @@ public class ParseCancel
             for(int i = 0; i < contentList.size(); i++)
                 if(contentList.get(i).startsWith("<tr class=\"list "))
                 {
-                    IndexedCancel cancel = parseCancel(new ArrayList<>(contentList.subList(i, i + cancelLength)));
+                    IndexedCancel cancel = parseCancel(new ArrayList<>(contentList.subList(i + 1, i + cancelLength)));
                     /** attempt to auto-fix some known table issues **/
                     if(cancel.getLessonNumber().equals(IndexedCancel.EMPTY_MESSAGE))
                     {
@@ -126,19 +126,20 @@ public class ParseCancel
     {
         IndexedCancel cancel = new IndexedCancel();
 
-        int vCount = 0;
-        for(String s : contentList)
-        {
+        int cCount = 0;
+        for (String s : contentList) {
+            String value = IndexedCancel.EMPTY_MESSAGE;
+
             int start = s.indexOf(">");
-            int end = s.indexOf("</");
-            String value;
-            if(start > 0 && end > 0)
-            {
+            int end = s.indexOf("</td>");
+
+            if (start != -1 && end != -1)
                 value = s.substring(start + 1, end);
-                cancel.autoAssign(vCount, value);
-                vCount++;
-            }
+
+            cancel.autoAssign(cCount, value);
+            cCount++;
         }
+
         return cancel;
     }
 

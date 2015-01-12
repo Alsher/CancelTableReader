@@ -116,9 +116,9 @@ public class GUI extends JFrame
                         data[rowCount][ 1] = c.getDate();
                         data[rowCount][ 2] = c.getClassName();
                         data[rowCount][ 3] = c.getTeacher();
-                        data[rowCount][ 4] = c.getSubject();
-                        data[rowCount][ 5] = c.getCoverSubject();
-                        data[rowCount][ 6] = c.getCoverTeacher();
+                        data[rowCount][ 4] = c.getCoverTeacher();
+                        data[rowCount][ 5] = c.getSubject();
+                        data[rowCount][ 6] = c.getCoverSubject();
                         data[rowCount][ 7] = c.getRoom();
                         data[rowCount][ 8] = c.getAlternativeRoom();
                         data[rowCount][ 9] = c.getType();
@@ -148,9 +148,9 @@ public class GUI extends JFrame
                 "Date",
                 "Class",
                 "Teacher",
+                "Cover Teacher",
                 "Subject",
                 "Cover Subject",
-                "Cover Teacher",
                 "Room",
                 "Alt Room",
                 "Type",

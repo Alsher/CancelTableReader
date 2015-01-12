@@ -5,9 +5,9 @@ public class IndexedCancel
     private static final int DATE_ID = 1;
     private static final int CLASS_ID = 2;
     private static final int TEACHER_ID = 3;
-    private static final int SUBJECT_ID = 4;
-    private static final int COVERSUBJECT_ID = 5;
-    private static final int COVERTEACHER_ID = 6;
+    private static final int COVERTEACHER_ID = 4;
+    private static final int SUBJECT_ID = 5;
+    private static final int COVERSUBJECT_ID = 6;
     private static final int ROOM_ID = 7;
     private static final int ALTERNATIVEROOM_ID = 8;
     private static final int TYPE_ID = 9;
