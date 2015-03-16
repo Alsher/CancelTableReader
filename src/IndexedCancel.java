@@ -1,17 +1,18 @@
+import java.util.ArrayList;
+
 public class IndexedCancel
 {
 
     private static final int LESSONCOUNT_ID = 0;
-    private static final int DATE_ID = 1;
-    private static final int CLASS_ID = 2;
-    private static final int TEACHER_ID = 3;
-    private static final int COVERTEACHER_ID = 4;
-    private static final int SUBJECT_ID = 5;
-    private static final int COVERSUBJECT_ID = 6;
-    private static final int ROOM_ID = 7;
-    private static final int ALTERNATIVEROOM_ID = 8;
-    private static final int TYPE_ID = 9;
-    private static final int COMMENT_ID = 10;
+    private static final int CLASS_ID = 1;
+    private static final int TEACHER_ID = 2;
+    private static final int COVERTEACHER_ID = 3;
+    private static final int SUBJECT_ID = 4;
+    private static final int COVERSUBJECT_ID = 5;
+    private static final int ROOM_ID = 6;
+    private static final int ALTERNATIVEROOM_ID = 7;
+    private static final int TYPE_ID = 8;
+    private static final int COMMENT_ID = 9;
 
     public static final String EMPTY_MESSAGE = "---";
 
@@ -27,38 +28,15 @@ public class IndexedCancel
     private String type;
     private String comment;
 
-    public IndexedCancel(String lessonNumber, String date, String className, String teacher, String subject, String coverSubject, String coverTeacher, String room, String alternativeRoom, String type, String comment) {
-        this.lessonNumber = lessonNumber;
-        this.date = date;
-        this.className = className;
-        this.teacher = teacher;
-        this.subject = subject;
-        this.coverSubject = coverSubject;
-        this.coverTeacher = coverTeacher;
-        this.room = room;
-        this.alternativeRoom = alternativeRoom;
-        this.type = type;
-        this.comment = comment;
-    }
-
-    public IndexedCancel()
+    public IndexedCancel(ArrayList<String> values)
     {
-        lessonNumber = EMPTY_MESSAGE;
-        date = EMPTY_MESSAGE;
-        className = EMPTY_MESSAGE;
-        teacher = EMPTY_MESSAGE;
-        subject = EMPTY_MESSAGE;
-        coverSubject = EMPTY_MESSAGE;
-        coverTeacher = EMPTY_MESSAGE;
-        room = EMPTY_MESSAGE;
-        alternativeRoom = EMPTY_MESSAGE;
-        type = EMPTY_MESSAGE;
-        comment = EMPTY_MESSAGE;
+        for(int i = 0; i < values.size(); i++)
+            autoAssign(i, values.get(i));
     }
 
     public void autoAssign(int id, String value)
     {
-        assert(id > 0 || id < 11) : ("Attribute count: " + id + " is not supported");
+        assert(id > 0 || id < 10) : ("Attribute count: " + id + " is not supported");
 
         if(value.equals("&nbsp;"))
             value = EMPTY_MESSAGE;
@@ -70,18 +48,16 @@ public class IndexedCancel
         {
             case LESSONCOUNT_ID:
                 lessonNumber = value; break;
-            case DATE_ID:
-                date = value; break;
             case CLASS_ID:
                 className = value; break;
             case TEACHER_ID:
                 teacher = value; break;
             case SUBJECT_ID:
                 subject = value; break;
-            case COVERSUBJECT_ID:
-                coverSubject = value; break;
             case COVERTEACHER_ID:
                 coverTeacher = value; break;
+            case COVERSUBJECT_ID:
+                coverSubject = value; break;
             case ROOM_ID:
                 room = value; break;
             case ALTERNATIVEROOM_ID:

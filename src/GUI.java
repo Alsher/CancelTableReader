@@ -13,7 +13,7 @@ import java.util.Calendar;
 
 public class GUI extends JFrame
 {
-    private static final int TABLE_WIDTH = 825, TABLE_HEIGHT = 300;
+    private static final int TABLE_WIDTH = 1000, TABLE_HEIGHT = 300;
 
     private JPanel controls;
     private JComboBox<String> selectClass;
@@ -34,7 +34,7 @@ public class GUI extends JFrame
         graphics = new JPanel();
 
         generateGraphics();
-        generateControlls();
+        generateControls();
 
         add(controls);
         add(graphics);
@@ -60,7 +60,7 @@ public class GUI extends JFrame
         graphics.add(scrollPane);
     }
 
-    private void generateControlls()
+    private void generateControls()
     {
         selectClass = new JComboBox<>();
         for(int i = 5; i <= 13; i++)
@@ -110,19 +110,18 @@ public class GUI extends JFrame
                 graphics.remove(scrollPane);
                 if(!cancelList.isEmpty()) {
                     int rowCount = 0;
-                    String[][] data = new String[cancelList.size()][11];
+                    String[][] data = new String[cancelList.size()][10];
                     for (IndexedCancel c : cancelList) {
-                        data[rowCount][ 0] = c.getLessonNumber();
-                        data[rowCount][ 1] = c.getDate();
-                        data[rowCount][ 2] = c.getClassName();
-                        data[rowCount][ 3] = c.getTeacher();
-                        data[rowCount][ 4] = c.getCoverTeacher();
-                        data[rowCount][ 5] = c.getSubject();
-                        data[rowCount][ 6] = c.getCoverSubject();
-                        data[rowCount][ 7] = c.getRoom();
-                        data[rowCount][ 8] = c.getAlternativeRoom();
-                        data[rowCount][ 9] = c.getType();
-                        data[rowCount][10] = c.getComment();
+                        data[rowCount][0] = c.getLessonNumber();
+                        data[rowCount][1] = c.getClassName();
+                        data[rowCount][2] = c.getTeacher();
+                        data[rowCount][3] = c.getCoverTeacher();
+                        data[rowCount][4] = c.getSubject();
+                        data[rowCount][5] = c.getCoverSubject();
+                        data[rowCount][6] = c.getRoom();
+                        data[rowCount][7] = c.getAlternativeRoom();
+                        data[rowCount][8] = c.getType();
+                        data[rowCount][9] = c.getComment();
                         rowCount++;
                     }
                     cancelTable = new JTable(new CancelTableModel(data));
@@ -145,11 +144,10 @@ public class GUI extends JFrame
     {
         private String[] columnNames = new String[]{
                 "Lesson",
-                "Date",
                 "Class",
                 "Teacher",
-                "Cover Teacher",
                 "Subject",
+                "Cover Teacher",
                 "Cover Subject",
                 "Room",
                 "Alt Room",
